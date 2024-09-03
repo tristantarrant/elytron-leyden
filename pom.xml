@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.redhat</groupId>
+    <artifactId>elytron-leyden</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>base</module>
+    </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.redhat</groupId>
+            <artifactId>elytron-leyden-base</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>leyden-cds</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <executable>${env.LEYDEN_HOME}/bin/java</executable>
+                            <addOutputToClasspath>false</addOutputToClasspath>
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <classpath>
+                                    <dependency>org.wildfly.security:wildfly-elytron-base</dependency>
+                                    <dependency>org.wildfly.security:wildfly-elytron-credential</dependency>
+                                    <dependency>com.redhat:elytron-leyden-base</dependency>
+                                </classpath>
+                                <argument>-XX:CacheDataStore=elytron.aot</argument>
+                                <argument>com.redhat.leyden.Main</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>leyden-run</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <executable>${env.LEYDEN_HOME}/bin/java</executable>
+                            <addOutputToClasspath>false</addOutputToClasspath>
+                            <arguments>
+                                <argument>-classpath</argument>
+                                <classpath>
+                                    <dependency>org.wildfly.security:wildfly-elytron-base</dependency>
+                                    <dependency>org.wildfly.security:wildfly-elytron-credential</dependency>
+                                    <dependency>com.redhat:elytron-leyden-base</dependency>
+                                </classpath>
+                                <argument>-XX:CacheDataStore=elytron.aot</argument>
+                                <argument>-XX:+AOTClassLinking</argument>
+                                <argument>com.redhat.leyden.Main</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
